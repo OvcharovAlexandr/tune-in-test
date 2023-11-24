@@ -1,0 +1,18 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="property"
+            type="com.example.android.tune_in_test.network.TuneInProperty" />
+    </data>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:padding="2dp"
+        android:text="@{property.text}"
+        android:textSize="39sp" />
+
+</layout>
