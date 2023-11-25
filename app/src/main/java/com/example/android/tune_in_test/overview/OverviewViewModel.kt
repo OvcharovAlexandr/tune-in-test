@@ -64,7 +64,7 @@ class OverviewViewModel(tuneInProperty: TuneInProperty, app: Application) : Andr
     private fun getTuneInProperties() {
 
         coroutineScope.launch {
-            var getPropertiesDeferred = TuneInApi.retrofitService.getProperties(TuneInApi.modifyLink("http://opml.radiotime.com/Browse.ashx?c=talk"))
+            var getPropertiesDeferred = TuneInApi.retrofitService.getProperties(TuneInApi.modifyLink(_linkURL.value))
             try {
                 _status.value = TuneInStatus.LOADING
                 var requestResult = getPropertiesDeferred.await()

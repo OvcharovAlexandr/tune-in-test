@@ -1,5 +1,6 @@
 package com.example.android.tune_in_test.network
 
+import android.net.Uri
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -39,7 +40,9 @@ object TuneInApi {
     }
 
     fun modifyLink(linkText: String?): String? {
-        return linkText?.replace(BASE_URL, "", true)?.replace(BROWSE_URL, "", true)
+
+        return "?" + Uri.parse(linkText).encodedQuery
+//        return linkText?.replace(BASE_URL, "", true)?.replace(BROWSE_URL, "", true)
     }
 
 }
