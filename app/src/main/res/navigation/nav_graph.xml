@@ -17,16 +17,19 @@
         <action
             android:id="@+id/action_showProperties"
             app:destination="@id/overviewFragment" />
+        <action
+            android:id="@+id/action_showProperty"
+            app:destination="@id/detailFragment" />
     </fragment>
 
-<!--    <fragment-->
-<!--        android:id="@+id/detailFragment"-->
-<!--        android:name="com.example.android.marsrealestate.detail.DetailFragment"-->
-<!--        android:label="fragment_detail"-->
-<!--        tools:layout="@layout/fragment_detail">-->
-<!--        <argument-->
-<!--            android:name="selectedProperty"-->
-<!--            app:argType="com.example.android.marsrealestate.network.MarsProperty" />-->
-<!--    </fragment>-->
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.example.android.tune_in_test.detail.DetailFragment"
+        android:label="fragment_detail"
+        tools:layout="@layout/fragment_detail">
+        <argument
+            android:name="selectedProperty"
+            app:argType="com.example.android.tune_in_test.network.TuneInProperty" />
+    </fragment>
 
 </navigation>

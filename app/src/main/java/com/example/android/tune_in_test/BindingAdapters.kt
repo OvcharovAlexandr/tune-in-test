@@ -19,15 +19,24 @@ fun bindRecyclerView(recyclerView: RecyclerView, data: List<TuneInProperty>?) {
 
 @BindingAdapter("imageUrl")
 fun bindImage(imgView: ImageView, imgUrl: String?) {
-    imgUrl?.let{
-        val imgUri = it.toUri().buildUpon().scheme("https").build()
-        Glide.with(imgView.context)
-            .load(imgUri)
-            .apply(RequestOptions()
-                .placeholder(R.drawable.loading_animation)
-                .error(R.drawable.ic_broken_image))
-            .into(imgView)
+
+    if (imgUrl != null) {
+        imgView.visibility = View.VISIBLE
+        imgUrl.let {
+            val imgUri = it.toUri().buildUpon().scheme("https").build()
+            Glide.with(imgView.context)
+                .load(imgUri)
+                .apply(
+                    RequestOptions()
+                        .placeholder(R.drawable.loading_animation)
+                        .error(R.drawable.ic_broken_image)
+                )
+                .into(imgView)
+        }
+    } else {
+        imgView.visibility = View.GONE
     }
+
 }
 
 @BindingAdapter("tuneInApiStatus")
@@ -37,13 +46,16 @@ fun bindStatus(statusImageView: ImageView, status: TuneInStatus?) {
             statusImageView.visibility = View.VISIBLE
             statusImageView.setImageResource(R.drawable.loading_animation)
         }
+
         TuneInStatus.ERROR -> {
             statusImageView.visibility = View.VISIBLE
             statusImageView.setImageResource(R.drawable.ic_connection_error)
         }
+
         TuneInStatus.DONE -> {
             statusImageView.visibility = View.GONE
         }
+
         else -> {}
     }
 }

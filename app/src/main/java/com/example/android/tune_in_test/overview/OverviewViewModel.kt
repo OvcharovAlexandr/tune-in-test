@@ -57,14 +57,20 @@ class OverviewViewModel(tuneInProperty: TuneInProperty, app: Application) : Andr
     private val coroutineScope = CoroutineScope(viewModelJob + Dispatchers.Main)
 
     init {
-        _linkURL.value = tuneInProperty.linkURL
-        getTuneInProperties()
+        if (tuneInProperty.children?.isNotEmpty() == true) {
+            _headerTitle.value = (tuneInProperty.text)
+            _properties.value = (tuneInProperty.children)
+            _status.value = TuneInStatus.DONE
+        } else {
+            _linkURL.value = tuneInProperty.linkURL
+            getTuneInProperties()
+        }
     }
 
     private fun getTuneInProperties() {
 
         coroutineScope.launch {
-            var getPropertiesDeferred = TuneInApi.retrofitService.getProperties(TuneInApi.modifyLink(_linkURL.value))
+            var getPropertiesDeferred = TuneInApi.retrofitService.getProperties(_linkURL.value)
             try {
                 _status.value = TuneInStatus.LOADING
                 var requestResult = getPropertiesDeferred.await()

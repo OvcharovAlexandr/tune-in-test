@@ -23,7 +23,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.example.android.tune_in_test.R
 import com.example.android.tune_in_test.databinding.FragmentOverviewBinding
 import com.example.android.tune_in_test.network.TuneInProperty
 
@@ -31,18 +30,6 @@ import com.example.android.tune_in_test.network.TuneInProperty
  * This fragment shows the the status of the Mars real-estate web services transaction.
  */
 class OverviewFragment : Fragment() {
-
-    /**
-     * Lazily initialize our [OverviewViewModel].
-     */
-//    private val viewModel: OverviewViewModel by lazy {
-//        ViewModelProvider(this).get(OverviewViewModel::class.java)
-//    }
-
-    /**
-     * Inflates the layout with Data Binding, sets its lifecycle owner to the OverviewFragment
-     * to enable Data Binding to observe LiveData, and sets up the RecyclerView with an adapter.
-     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -57,7 +44,7 @@ class OverviewFragment : Fragment() {
         var tuneInProperty: TuneInProperty = try {
             OverviewFragmentArgs.fromBundle(requireArguments()).selectedProperty
         } catch (e: Exception) {
-            TuneInProperty("", "", "")
+            TuneInProperty("", "", "", listOf(), "")
         }
 
         val viewModelFactory = OverviewViewModelFactory(tuneInProperty, application)
@@ -74,8 +61,13 @@ class OverviewFragment : Fragment() {
 
         viewModel.navigateToSelectedProperty.observe(viewLifecycleOwner, Observer {
             if (null != it) {
-                this.findNavController()
-                    .navigate(OverviewFragmentDirections.actionShowProperties(it))
+                if (it.type != "audio") {
+                    this.findNavController()
+                        .navigate(OverviewFragmentDirections.actionShowProperties(it))
+                } else {
+                    this.findNavController()
+                        .navigate(OverviewFragmentDirections.actionShowProperty(it))
+                }
                 viewModel.displayPropertyDetailsComplete()
             }
         })

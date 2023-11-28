@@ -10,7 +10,7 @@ data class TuneInRequest(
 )
 
 data class HeaderClass(
-    val title: String,
+    val title: String?,
 )
 
 @Parcelize
@@ -18,4 +18,6 @@ data class TuneInProperty(
     val type: String?,
     val text: String?,
     @Json(name = "URL") val linkURL: String?,
+    val children: List<TuneInProperty>?,
+    @Json(name = "image") val imgSrcUrl: String?
 ) : Parcelable
