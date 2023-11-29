@@ -10,7 +10,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <ImageView
@@ -29,16 +29,17 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_margin="6dp"
             android:adjustViewBounds="false"
             android:padding="2dp"
             android:text="@{property.text}"
             android:textAlignment="textStart"
             android:textSize="39sp"
+            app:layout_constrainedWidth="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/station_image"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="test text that too big for small line and it hides part of image" />
+            tools:text="text of element" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
