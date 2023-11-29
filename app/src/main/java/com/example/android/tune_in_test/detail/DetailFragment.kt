@@ -2,6 +2,8 @@ package com.example.android.tune_in_test.detail
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -23,6 +25,11 @@ class DetailFragment : Fragment() {
         binding.viewModel = ViewModelProvider(
             this, viewModelFactory)[DetailViewModel::class.java]
 
+        setHasOptionsMenu(true)
         return binding.root
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
     }
 }

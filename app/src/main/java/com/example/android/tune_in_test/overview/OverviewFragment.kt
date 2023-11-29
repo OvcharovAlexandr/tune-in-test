@@ -22,7 +22,10 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
+import com.example.android.tune_in_test.R
 import com.example.android.tune_in_test.databinding.FragmentOverviewBinding
 import com.example.android.tune_in_test.network.TuneInProperty
 
@@ -72,11 +75,7 @@ class OverviewFragment : Fragment() {
             }
         })
 
-        setHasOptionsMenu(true)
         return binding.root
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-    }
 }
