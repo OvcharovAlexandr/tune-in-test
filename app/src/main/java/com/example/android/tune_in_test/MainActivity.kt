@@ -2,9 +2,11 @@ package com.example.android.tune_in_test
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.example.android.tune_in_test.detail.DetailViewModel
 
 class MainActivity : AppCompatActivity() {
     private lateinit var navHostFragment: NavHostFragment

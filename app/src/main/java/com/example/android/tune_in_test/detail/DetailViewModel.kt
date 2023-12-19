@@ -20,24 +20,5 @@ class DetailViewModel(tuneInProperty: TuneInProperty, app: Application) : Androi
     init {
         _selectedProperty.value = tuneInProperty
 
-        mediaPlayer = MediaPlayer()
-        mediaPlayer!!.setAudioStreamType(AudioManager.STREAM_MUSIC)
-
-        try {
-            mediaPlayer!!.setDataSource(_selectedProperty.value!!.linkURL)
-            mediaPlayer!!.prepare()
-            mediaPlayer!!.start()
-        }catch (e:IOException) {
-            e.printStackTrace()
-        }
-
-    }
-
-    fun stopMusic(){
-        if (mediaPlayer!!.isPlaying) {
-            mediaPlayer!!.stop()
-            mediaPlayer!!.reset()
-            mediaPlayer!!.release()
-        }
     }
 }

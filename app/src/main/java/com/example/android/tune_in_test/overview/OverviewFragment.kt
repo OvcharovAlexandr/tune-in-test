@@ -42,7 +42,7 @@ class OverviewFragment : Fragment() {
         val binding = FragmentOverviewBinding.inflate(inflater)
 
         // Allows Data Binding to Observe LiveData with the lifecycle of this Fragment
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
 
         var tuneInProperty: TuneInProperty = try {
             OverviewFragmentArgs.fromBundle(requireArguments()).selectedProperty

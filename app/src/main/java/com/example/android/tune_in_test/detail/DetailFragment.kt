@@ -16,7 +16,7 @@ class DetailFragment : Fragment() {
 
         val application = requireNotNull(activity).application
         val binding = FragmentDetailBinding.inflate(inflater)
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
 
         val tuneInProperty = DetailFragmentArgs.fromBundle(requireArguments()).selectedProperty
 

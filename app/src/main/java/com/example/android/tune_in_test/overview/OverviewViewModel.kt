@@ -29,6 +29,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 enum class TuneInStatus { LOADING, ERROR, DONE }
 
@@ -40,8 +41,8 @@ class OverviewViewModel(tuneInProperty: TuneInProperty, app: Application) : Andr
     val status: LiveData<TuneInStatus>
         get() = _status
 
-    private val _headerTitle = MutableLiveData<String>()
-    val headerTitle: LiveData<String>
+    private val _headerTitle = MutableLiveData<String?>()
+    val headerTitle: LiveData<String?>
         get() = _headerTitle
 
     private val _properties = MutableLiveData<List<TuneInProperty>>()
@@ -54,7 +55,7 @@ class OverviewViewModel(tuneInProperty: TuneInProperty, app: Application) : Andr
         get() = _navigateToSelectedProperty
 
     private var viewModelJob = Job()
-    private val coroutineScope = CoroutineScope(viewModelJob + Dispatchers.Main)
+    private val coroutineScope = CoroutineScope(viewModelJob + Dispatchers.IO)
 
     init {
         if (tuneInProperty.children?.isNotEmpty() == true) {
@@ -70,19 +71,21 @@ class OverviewViewModel(tuneInProperty: TuneInProperty, app: Application) : Andr
     private fun getTuneInProperties() {
 
         coroutineScope.launch {
-            var getPropertiesDeferred = TuneInApi.retrofitService.getProperties(_linkURL.value)
-            try {
-                _status.value = TuneInStatus.LOADING
-                var requestResult = getPropertiesDeferred.await()
-                _status.value = TuneInStatus.DONE
-                if (requestResult.body.isNotEmpty()) {
-                    _properties.value = requestResult.body
-                    _headerTitle.value = requestResult.head.title
+            val getPropertiesDeferred = TuneInApi.retrofitService.getProperties(_linkURL.value)
+            val requestResult = getPropertiesDeferred.await()
+            withContext(Dispatchers.Main) {
+                try {
+                    _status.value = TuneInStatus.LOADING
+                    _status.value = TuneInStatus.DONE
+                    if (requestResult.body.isNotEmpty()) {
+                        _properties.value = requestResult.body
+                        _headerTitle.value = requestResult.head.title
+                    }
+                } catch (e: Exception) {
+                    _headerTitle.value = "Failure: ${e.message}"
+                    _status.value = TuneInStatus.ERROR
+                    _properties.value = ArrayList()
                 }
-            } catch (e: Exception) {
-                _headerTitle.value = "Failure: ${e.message}"
-                _status.value = TuneInStatus.ERROR
-                _properties.value = ArrayList()
             }
         }
     }
