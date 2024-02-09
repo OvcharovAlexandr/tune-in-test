@@ -29,9 +29,6 @@ import com.example.android.tune_in_test.R
 import com.example.android.tune_in_test.databinding.FragmentOverviewBinding
 import com.example.android.tune_in_test.network.TuneInProperty
 
-/**
- * This fragment shows the the status of the Mars real-estate web services transaction.
- */
 class OverviewFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

@@ -69,13 +69,12 @@ class OverviewViewModel(tuneInProperty: TuneInProperty, app: Application) : Andr
     }
 
     private fun getTuneInProperties() {
-
+        _status.value = TuneInStatus.LOADING
         coroutineScope.launch {
             val getPropertiesDeferred = TuneInApi.retrofitService.getProperties(_linkURL.value)
             val requestResult = getPropertiesDeferred.await()
             withContext(Dispatchers.Main) {
                 try {
-                    _status.value = TuneInStatus.LOADING
                     _status.value = TuneInStatus.DONE
                     if (requestResult.body.isNotEmpty()) {
                         _properties.value = requestResult.body

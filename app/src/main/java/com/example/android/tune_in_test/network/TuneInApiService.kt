@@ -30,6 +30,13 @@ interface TuneInApiService {
         @Query("render") type: String = "json",
     ):
             Deferred<TuneInRequest>
+
+    @GET
+    fun getAudio(
+        @Url linkURL: String? = "",
+        @Query("render") type: String = "json",
+    ):
+            Deferred<TuneInAudioRequest>
 }
 
 object TuneInApi {

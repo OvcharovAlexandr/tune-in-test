@@ -1,9 +1,9 @@
-
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewModel"
             type="com.example.android.tune_in_test.detail.DetailViewModel" />
@@ -51,6 +51,15 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/property_text"
                 tools:text="LINK" />
+
+            <androidx.media3.ui.PlayerView
+                android:id="@+id/player_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/now_playing"
+                app:show_buffering="when_playing"
+                app:show_shuffle_button="true" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
