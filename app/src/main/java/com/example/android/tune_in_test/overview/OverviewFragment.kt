@@ -22,12 +22,11 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
-import com.example.android.tune_in_test.R
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.android.tune_in_test.databinding.FragmentOverviewBinding
 import com.example.android.tune_in_test.network.TuneInProperty
+
 
 class OverviewFragment : Fragment() {
     override fun onCreateView(
@@ -58,6 +57,11 @@ class OverviewFragment : Fragment() {
         binding.itemList.adapter = ItemListAdapter(ItemListAdapter.OnClickListener {
             viewModel.displayPropertyDetails(it)
         })
+
+        val mDividerItemDecoration = DividerItemDecoration(
+            binding.itemList.context, 1
+        )
+        binding.itemList.addItemDecoration(mDividerItemDecoration)
 
         viewModel.navigateToSelectedProperty.observe(viewLifecycleOwner, Observer {
             if (null != it) {

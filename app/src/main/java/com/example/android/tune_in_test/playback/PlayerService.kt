@@ -3,11 +3,11 @@ package com.example.android.tune_in_test.playback
 import android.content.Context
 import android.util.Log
 import androidx.media3.common.MediaItem
-import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.example.android.tune_in_test.network.TuneInAudio
 
+private const val TAG = "PlayerActivity"
 object PlayerService{
 
     private val playbackStateListener: Player.Listener = playbackStateListener()
@@ -16,16 +16,21 @@ object PlayerService{
     private var playWhenReady = true
     private var mediaItemIndex = 0
     private var playbackPosition = 0L
-    fun initPlayer(appContext: Context){
-        player = ExoPlayer.Builder(appContext).build()
-            .also { exoPlayer ->
-                exoPlayer.playWhenReady = playWhenReady
-                exoPlayer.addListener(playbackStateListener)
+    fun initPlayer(appContext: Context) {
+        if (player == null) {
+            player = ExoPlayer.Builder(appContext).build()
+                .also { exoPlayer ->
+                    exoPlayer.playWhenReady = playWhenReady
+                    exoPlayer.addListener(playbackStateListener)
+                }
+        } else {
+            player?.let { exoPlayer ->
                 if (exoPlayer.mediaItemCount > 0) {
                     exoPlayer.prepare()
                     exoPlayer.play()
                 }
             }
+        }
     }
     fun releasePlayer(){
         player?.let { player ->
@@ -41,12 +46,13 @@ object PlayerService{
     fun getPlayer() = player
 
     fun addMediaItem(audioItem: TuneInAudio) {
-        player?.let { player ->
-//            player?.addMediaItem(MediaItem.fromUri("http://solid48.streamupsolutions.com:8077/109fm_live"))
-            player.clearMediaItems()
-            player.addMediaItem(MediaItem.fromUri(audioItem.linkURL))
-        }
+        player?.addMediaItem(MediaItem.fromUri(audioItem.linkURL))
     }
+
+    fun clearPlayList() {
+        player?.clearMediaItems()
+    }
+
     fun play() {
         player?.let { player ->
             player.prepare()
@@ -55,8 +61,7 @@ object PlayerService{
     }
 
     fun pause() {
-        player?.let { player ->
-            player.pause()}
+        player?.pause()
     }
 }
 private fun playbackStateListener() = object : Player.Listener {
@@ -68,6 +73,6 @@ private fun playbackStateListener() = object : Player.Listener {
             ExoPlayer.STATE_ENDED -> "ExoPlayer.STATE_ENDED     -"
             else -> "UNKNOWN_STATE             -"
         }
-//        Log.d(TAG, "changed state to $stateString")
+       Log.d(TAG, "changed state to $stateString")
     }
 }

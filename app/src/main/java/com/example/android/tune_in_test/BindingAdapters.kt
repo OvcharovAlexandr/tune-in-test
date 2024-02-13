@@ -56,6 +56,8 @@ fun bindStatus(statusImageView: ImageView, status: TuneInStatus?) {
             statusImageView.visibility = View.GONE
         }
 
-        else -> {}
+        else -> {
+            statusImageView.visibility = View.GONE
+        }
     }
 }

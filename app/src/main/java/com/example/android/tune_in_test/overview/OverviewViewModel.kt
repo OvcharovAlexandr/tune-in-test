@@ -21,8 +21,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.example.android.tune_in_test.network.HeaderClass
 import com.example.android.tune_in_test.network.TuneInApi
 import com.example.android.tune_in_test.network.TuneInProperty
 import kotlinx.coroutines.CoroutineScope
@@ -77,7 +75,12 @@ class OverviewViewModel(tuneInProperty: TuneInProperty, app: Application) : Andr
                 try {
                     _status.value = TuneInStatus.DONE
                     if (requestResult.body.isNotEmpty()) {
-                        _properties.value = requestResult.body
+                        _properties.value = requestResult.body.flatMap{ it ->
+                            when(it.children){
+                                null -> listOf(it)
+                                else -> listOf(it) + it.children.filter { it.children == null }
+                            }
+                        }
                         _headerTitle.value = requestResult.head.title
                     }
                 } catch (e: Exception) {

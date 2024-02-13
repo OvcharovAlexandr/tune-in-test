@@ -39,6 +39,7 @@ class DetailViewModel(tuneInProperty: TuneInProperty, app: Application) : Androi
                 try {
 //                    _status.value = TuneInStatus.DONE
                     if (requestResult.body.isNotEmpty()) {
+                        PlayerService.clearPlayList()
                         requestResult.body.map { tuneInAudio ->  PlayerService.addMediaItem(tuneInAudio)}
                         PlayerService.play()
                     }
@@ -53,6 +54,6 @@ class DetailViewModel(tuneInProperty: TuneInProperty, app: Application) : Androi
     override fun onCleared() {
         super.onCleared()
         viewModelJob.cancel()
-        PlayerService.pause()
+//        PlayerService.pause()
     }
 }
