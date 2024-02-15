@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">tune-in-test</string>
+    <string name="app_name">tune-in-test_app</string>
     <string name="mars_image">mars_image</string>
     <string name="stationimage">stationImage</string>
     <string name="stationImage">stationImage</string>

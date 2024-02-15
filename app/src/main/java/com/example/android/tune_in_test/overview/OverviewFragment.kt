@@ -17,18 +17,23 @@
 
 package com.example.android.tune_in_test.overview
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.service.autofill.VisibilitySetterAction
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.media3.common.Player
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.android.tune_in_test.databinding.FragmentOverviewBinding
 import com.example.android.tune_in_test.network.TuneInProperty
+import com.example.android.tune_in_test.playback.PlayerService
 
 
 class OverviewFragment : Fragment() {
+    @SuppressLint("UnsafeOptInUsageError")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -53,7 +58,15 @@ class OverviewFragment : Fragment() {
         )[OverviewViewModel::class.java]
 
         binding.viewModel = viewModel
-
+        val player = PlayerService.getPlayer()
+        player?.let { player ->
+            if (player.isPlaying) {
+                binding.playerControlView.visibility = View.VISIBLE
+                binding.playerControlView.player = player
+            }else {
+                binding.playerControlView.visibility = View.GONE
+            }
+        }
         binding.itemList.adapter = ItemListAdapter(ItemListAdapter.OnClickListener {
             viewModel.displayPropertyDetails(it)
         })

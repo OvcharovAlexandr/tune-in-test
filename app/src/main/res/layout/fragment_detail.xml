@@ -9,26 +9,38 @@
             type="com.example.android.tune_in_test.detail.DetailViewModel" />
     </data>
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".DetailFragment">
+        android:keepScreenOn="true"
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
             <ImageView
                 android:id="@+id/main_photo_image"
-                android:layout_width="0dp"
-                android:layout_height="266dp"
-                android:scaleType="centerCrop"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:scaleType="fitCenter"
                 app:imageUrl="@{viewModel.selectedProperty.imgSrcUrl}"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:src="@tools:sample/backgrounds/scenic" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/property_text"
@@ -37,30 +49,14 @@
                 android:layout_marginTop="16dp"
                 android:text="@{viewModel.selectedProperty.text}"
                 android:textSize="39sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/main_photo_image"
                 tools:text="Title" />
 
-            <TextView
-                android:id="@+id/now_playing"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@{viewModel.selectedProperty.linkURL}"
-                android:textSize="20sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/property_text"
-                tools:text="LINK" />
-
-            <androidx.media3.ui.PlayerView
-                android:id="@+id/player_view"
+            <androidx.media3.ui.PlayerControlView
+                android:id="@+id/player_control_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/now_playing"
-                app:show_buffering="when_playing"
-                app:show_shuffle_button="true" />
+                app:show_timeout="0" />
+        </LinearLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+    </LinearLayout>
 </layout>

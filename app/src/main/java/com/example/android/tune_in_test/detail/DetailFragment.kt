@@ -1,5 +1,6 @@
 package com.example.android.tune_in_test.detail
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -14,6 +15,7 @@ import com.example.android.tune_in_test.databinding.FragmentDetailBinding
 import com.example.android.tune_in_test.playback.PlayerService
 
 class DetailFragment : Fragment() {
+    @SuppressLint("UnsafeOptInUsageError")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -27,7 +29,8 @@ class DetailFragment : Fragment() {
         val viewModelFactory = DetailViewModelFactory(tuneInProperty, application)
 
         binding.viewModel = ViewModelProvider(this, viewModelFactory)[DetailViewModel::class.java]
-        binding.playerView.player = PlayerService.getPlayer()
+//        binding.playerView.player = PlayerService.getPlayer()
+        binding.playerControlView.player = PlayerService.getPlayer()
 
         setHasOptionsMenu(true)
         return binding.root
