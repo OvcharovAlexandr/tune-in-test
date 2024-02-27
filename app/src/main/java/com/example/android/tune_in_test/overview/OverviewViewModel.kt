@@ -56,13 +56,16 @@ class OverviewViewModel(tuneInProperty: TuneInProperty, app: Application) : Andr
     private val coroutineScope = CoroutineScope(viewModelJob + Dispatchers.IO)
 
     init {
-        if (tuneInProperty.children?.isNotEmpty() == true) {
-            _headerTitle.value = (tuneInProperty.text)
-            _properties.value = (tuneInProperty.children)
-            _status.value = TuneInStatus.DONE
-        } else {
-            _linkURL.value = tuneInProperty.linkURL
-            getTuneInProperties()
+        _linkURL.value = tuneInProperty.linkURL
+        getTuneInProperties()
+    }
+
+    private fun flatMapList(list: List<TuneInProperty>): List<TuneInProperty> {
+        return list.flatMap { it ->
+            when (it.children) {
+                null -> listOf(it)
+                else -> listOf(it) + flatMapList(it.children)
+            }
         }
     }
 
@@ -75,12 +78,7 @@ class OverviewViewModel(tuneInProperty: TuneInProperty, app: Application) : Andr
                 try {
                     _status.value = TuneInStatus.DONE
                     if (requestResult.body.isNotEmpty()) {
-                        _properties.value = requestResult.body.flatMap{ it ->
-                            when(it.children){
-                                null -> listOf(it)
-                                else -> listOf(it) + it.children.filter { it.children == null }
-                            }
-                        }
+                        _properties.value = flatMapList(requestResult.body)
                         _headerTitle.value = requestResult.head.title
                     }
                 } catch (e: Exception) {

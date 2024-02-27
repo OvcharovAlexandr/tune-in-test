@@ -3,4 +3,6 @@
     <string name="mars_image">mars_image</string>
     <string name="stationimage">stationImage</string>
     <string name="stationImage">stationImage</string>
+    <string name="status_image">status_image</string>
+    <string name="main_photo_image">main_photo_image</string>
 </resources>

@@ -25,7 +25,7 @@ class ItemListAdapter(private val onClickListener: OnClickListener) :
         }
 
         override fun areContentsTheSame(oldItem: TuneInProperty, newItem: TuneInProperty): Boolean {
-            return oldItem.linkURL == newItem.linkURL
+            return (oldItem.linkURL == newItem.linkURL).and(oldItem.text == newItem.text)
         }
     }
 
@@ -42,6 +42,8 @@ class ItemListAdapter(private val onClickListener: OnClickListener) :
         holder.itemView.setOnClickListener {
             onClickListener.onClick(tuneInProperty)
         }
+
+        holder.itemView.isClickable = tuneInProperty.type != null
 
         holder.bind(tuneInProperty)
     }

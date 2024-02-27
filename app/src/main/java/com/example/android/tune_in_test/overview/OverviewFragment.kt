@@ -19,12 +19,10 @@ package com.example.android.tune_in_test.overview
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.service.autofill.VisibilitySetterAction
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.media3.common.Player
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.android.tune_in_test.databinding.FragmentOverviewBinding
@@ -63,27 +61,28 @@ class OverviewFragment : Fragment() {
             if (player.isPlaying) {
                 binding.playerControlView.visibility = View.VISIBLE
                 binding.playerControlView.player = player
-            }else {
+            } else {
                 binding.playerControlView.visibility = View.GONE
             }
         }
-        binding.itemList.adapter = ItemListAdapter(ItemListAdapter.OnClickListener {
-            viewModel.displayPropertyDetails(it)
-        })
 
-        val mDividerItemDecoration = DividerItemDecoration(
-            binding.itemList.context, 1
-        )
-        binding.itemList.addItemDecoration(mDividerItemDecoration)
+        binding.itemList.apply {
+            adapter = ItemListAdapter(ItemListAdapter.OnClickListener {
+                viewModel.displayPropertyDetails(it)
+            })
+            addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+        }
 
         viewModel.navigateToSelectedProperty.observe(viewLifecycleOwner, Observer {
             if (null != it) {
-                if (it.type != "audio") {
+                if (it.type == "link") {
                     this.findNavController()
                         .navigate(OverviewFragmentDirections.actionShowProperties(it))
-                } else {
+                } else if (it.type == "audio") {
                     this.findNavController()
                         .navigate(OverviewFragmentDirections.actionShowProperty(it))
+                } else {
+                    return@Observer
                 }
                 viewModel.displayPropertyDetailsComplete()
             }
