@@ -29,8 +29,6 @@ class DetailFragment : Fragment() {
         val viewModelFactory = DetailViewModelFactory(tuneInProperty, application)
 
         binding.viewModel = ViewModelProvider(this, viewModelFactory)[DetailViewModel::class.java]
-//        binding.playerView.player = PlayerService.getPlayer()
-        binding.playerControlView.player = PlayerService.getPlayer()
 
         setHasOptionsMenu(true)
         return binding.root

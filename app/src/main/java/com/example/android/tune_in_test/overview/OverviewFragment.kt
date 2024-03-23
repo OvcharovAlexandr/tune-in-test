@@ -56,16 +56,6 @@ class OverviewFragment : Fragment() {
         )[OverviewViewModel::class.java]
 
         binding.viewModel = viewModel
-        val player = PlayerService.getPlayer()
-        player?.let { player ->
-            if (player.isPlaying) {
-                binding.playerControlView.visibility = View.VISIBLE
-                binding.playerControlView.player = player
-            } else {
-                binding.playerControlView.visibility = View.GONE
-            }
-        }
-
         binding.itemList.apply {
             adapter = ItemListAdapter(ItemListAdapter.OnClickListener {
                 viewModel.displayPropertyDetails(it)

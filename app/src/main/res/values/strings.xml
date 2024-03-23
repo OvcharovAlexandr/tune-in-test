@@ -5,4 +5,6 @@
     <string name="stationImage">stationImage</string>
     <string name="status_image">status_image</string>
     <string name="main_photo_image">main_photo_image</string>
+    <string name="no_music_available">no music available</string>
+    <string name="playback_button">playback_button</string>
 </resources>

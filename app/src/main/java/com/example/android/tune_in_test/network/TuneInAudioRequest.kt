@@ -4,6 +4,5 @@ import com.squareup.moshi.Json
 
 data class TuneInAudioRequest(val body: List<TuneInAudio>)
 data class TuneInAudio(
-    @Json(name = "player_width")val playerWidth: Double,
-    @Json(name = "player_height")val playerHeight: Double,
+    @Json(name = "guide_id")val id: String,
     @Json(name = "url") val linkURL: String)
