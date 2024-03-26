@@ -42,6 +42,16 @@ class DetailViewModel(tuneInProperty: TuneInProperty, app: Application) : Androi
     val isPlaying: LiveData<Boolean>
         get() = _isPlaying
 
+    private val _isPaused = MutableLiveData<Boolean>()
+    val isPaused: LiveData<Boolean>
+        get() = _isPaused
+
+    private val _isCurrentTrackPlaying = MutableLiveData<Boolean>()
+    val isCurrentTrackPlaying: LiveData<Boolean>
+        get() = _isCurrentTrackPlaying
+
+    private lateinit var currentMediaItem: MediaItem
+
     private val _playingStation = MutableLiveData<String>()
     val playingStation: LiveData<String>
         get() = _playingStation
@@ -57,7 +67,7 @@ class DetailViewModel(tuneInProperty: TuneInProperty, app: Application) : Androi
     init {
         _selectedProperty.value = tuneInProperty
         initializeController(app.applicationContext)
-        updatePlayList()
+        setCurrentMediaItem()
     }
 
     private fun initializeController(appContext: Context) {
@@ -67,46 +77,38 @@ class DetailViewModel(tuneInProperty: TuneInProperty, app: Application) : Androi
                 SessionToken(appContext, ComponentName(appContext, PlaybackService::class.java))
             )
                 .buildAsync()
-        updateMediaMetadataUI()
         controllerFuture.addListener({ setController() }, MoreExecutors.directExecutor())
     }
 
-    private fun updatePlayList() {
+    private fun setCurrentMediaItem() {
         coroutineScope.launch {
             val getAudioDeferred =
                 TuneInApi.retrofitService.getAudio(_selectedProperty.value?.linkURL)
             val requestResult = getAudioDeferred.await()
-            withContext(Dispatchers.Main) {
-                try {
-                    if (requestResult.body.isNotEmpty()) {
-                        var currentTuneInAudio: TuneInAudio? = null
-                        requestResult.body.map { tuneInAudio -> currentTuneInAudio = tuneInAudio }
-                        currentTuneInAudio?.let { it ->
-                            val mediaItem =
-                                MediaItem.Builder()
-                                    .setMediaId(it.id)
-                                    .setUri(it.linkURL)
-                                    .setMediaMetadata(
-                                        MediaMetadata.Builder()
-                                            .setTitle(selectedProperty.value?.text)
-                                            .setArtworkUri(selectedProperty.value?.imgSrcUrl?.toUri())
-                                            .build()
-                                    )
-                                    .build()
-                            controller?.run {
-                                clearMediaItems()
-                                setMediaItem(mediaItem)
-                                prepare()
-                                play()
-                            }
-                        }
+
+            try {
+                if (requestResult.body.isNotEmpty()) {
+                    var currentTuneInAudio: TuneInAudio? = null
+                    requestResult.body.map { tuneInAudio -> currentTuneInAudio = tuneInAudio }
+                    currentTuneInAudio?.let { it ->
+                        currentMediaItem =
+                            MediaItem.Builder()
+                                .setMediaId(it.id)
+                                .setUri(it.linkURL)
+                                .setMediaMetadata(
+                                    MediaMetadata.Builder()
+                                        .setTitle(selectedProperty.value?.text)
+                                        .setArtworkUri(selectedProperty.value?.imgSrcUrl?.toUri())
+                                        .build()
+                                ).build()
                     }
-                } catch (e: Exception) {
+                }
+            } catch (e: Exception) {
 //                    _headerTitle.value = "Failure: ${e.message}"
 //                    _status.value = TuneInStatus.ERROR
 //                    _properties.value = ArrayList()
-                }
             }
+
         }
     }
 
@@ -122,7 +124,8 @@ class DetailViewModel(tuneInProperty: TuneInProperty, app: Application) : Androi
 
     private fun setController() {
         val controller = this.controller ?: return
-
+        controller.prepare()
+        updateMediaMetadataUI()
         controller.addListener(
             object : Player.Listener {
                 override fun onEvents(player: Player, events: Player.Events) {
@@ -143,12 +146,19 @@ class DetailViewModel(tuneInProperty: TuneInProperty, app: Application) : Androi
         if (controller == null || controller.mediaItemCount == 0) {
             _playingStation.value = "no music available"
             _isPlaying.value = false
+            _isCurrentTrackPlaying.value = false
+            _isPaused.value = false
         } else if (controller.isPlaying) {
             _playingStation.value = (controller.mediaMetadata.title ?: "").toString()
             _isPlaying.value = true
+            _isCurrentTrackPlaying.value =
+                (controller.mediaMetadata.title == selectedProperty.value?.text)
+            _isPaused.value = false
         } else {
             _playingStation.value = (controller.mediaMetadata.title ?: "").toString()
             _isPlaying.value = false
+            _isCurrentTrackPlaying.value = false
+            _isPaused.value = true
         }
 
     }
@@ -157,4 +167,16 @@ class DetailViewModel(tuneInProperty: TuneInProperty, app: Application) : Androi
         controller?.run { if (isPlaying) pause() else play() }
     }
 
+    fun onCurrentTrackPlaybackButtonClick() {
+        controller?.let {
+            if (it.isPlaying && _isCurrentTrackPlaying.value!!) {
+                it.pause()
+            } else {
+                it.clearMediaItems()
+                it.setMediaItem(currentMediaItem)
+                it.prepare()
+                it.play()
+            }
+        }
+    }
 }

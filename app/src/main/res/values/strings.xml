@@ -7,4 +7,5 @@
     <string name="main_photo_image">main_photo_image</string>
     <string name="no_music_available">no music available</string>
     <string name="playback_button">playback_button</string>
+    <string name="current_track_playback_button">current_track_playback_button</string>
 </resources>

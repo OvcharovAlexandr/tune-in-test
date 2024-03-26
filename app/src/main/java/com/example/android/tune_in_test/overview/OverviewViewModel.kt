@@ -18,11 +18,19 @@
 package com.example.android.tune_in_test.overview
 
 import android.app.Application
+import android.content.ComponentName
+import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.media3.common.Player
+import androidx.media3.session.MediaController
+import androidx.media3.session.SessionToken
 import com.example.android.tune_in_test.network.TuneInApi
 import com.example.android.tune_in_test.network.TuneInProperty
+import com.example.android.tune_in_test.playback.PlaybackService
+import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.MoreExecutors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -32,6 +40,24 @@ import kotlinx.coroutines.withContext
 enum class TuneInStatus { LOADING, ERROR, DONE }
 
 class OverviewViewModel(tuneInProperty: TuneInProperty, app: Application) : AndroidViewModel(app) {
+
+    private val _isPlaying = MutableLiveData<Boolean>()
+    val isPlaying: LiveData<Boolean>
+        get() = _isPlaying
+
+    private val _isPaused = MutableLiveData<Boolean>()
+    val isPaused: LiveData<Boolean>
+        get() = _isPaused
+
+    private val _playingStation = MutableLiveData<String>()
+    val playingStation: LiveData<String>
+        get() = _playingStation
+
+    private lateinit var controllerFuture: ListenableFuture<MediaController>
+    private val controller: MediaController?
+        get() =
+            if (controllerFuture.isDone && !controllerFuture.isCancelled) controllerFuture.get() else null
+
 
     private val _linkURL = MutableLiveData<String?>()
 
@@ -57,7 +83,18 @@ class OverviewViewModel(tuneInProperty: TuneInProperty, app: Application) : Andr
 
     init {
         _linkURL.value = tuneInProperty.linkURL
+        initializeController(app.applicationContext)
         getTuneInProperties()
+    }
+
+    private fun initializeController(appContext: Context) {
+        controllerFuture =
+            MediaController.Builder(
+                appContext,
+                SessionToken(appContext, ComponentName(appContext, PlaybackService::class.java))
+            )
+                .buildAsync()
+        controllerFuture.addListener({ setController() }, MoreExecutors.directExecutor())
     }
 
     private fun flatMapList(list: List<TuneInProperty>): List<TuneInProperty> {
@@ -92,7 +129,53 @@ class OverviewViewModel(tuneInProperty: TuneInProperty, app: Application) : Andr
 
     override fun onCleared() {
         super.onCleared()
+        releaseController()
         viewModelJob.cancel()
+    }
+
+    private fun releaseController() {
+        MediaController.releaseFuture(controllerFuture)
+    }
+
+    private fun setController() {
+        val controller = this.controller ?: return
+        controller.prepare()
+        updateMediaMetadataUI()
+        controller.addListener(
+            object : Player.Listener {
+                override fun onEvents(player: Player, events: Player.Events) {
+                    if (events.contains(Player.EVENT_TRACKS_CHANGED)) {
+                        updateMediaMetadataUI()
+                    }
+                    if (events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
+                        updateMediaMetadataUI()
+                    }
+                }
+            }
+        )
+    }
+
+    private fun updateMediaMetadataUI() {
+
+        val controller = this.controller
+        if (controller == null || controller.mediaItemCount == 0) {
+            _playingStation.value = "no music available"
+            _isPlaying.value = false
+            _isPaused.value = false
+        } else if (controller.isPlaying) {
+            _playingStation.value = (controller.mediaMetadata.title ?: "").toString()
+            _isPlaying.value = true
+            _isPaused.value = false
+        } else {
+            _playingStation.value = (controller.mediaMetadata.title ?: "").toString()
+            _isPlaying.value = false
+            _isPaused.value = true
+        }
+
+    }
+
+    fun onPlaybackButtonClick() {
+        controller?.run { if (isPlaying) pause() else play() }
     }
 
     fun displayPropertyDetails(tuneInProperty: TuneInProperty) {

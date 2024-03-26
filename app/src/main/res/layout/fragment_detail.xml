@@ -51,12 +51,23 @@
                 android:text="@{viewModel.selectedProperty.text}"
                 android:textSize="39sp"
                 tools:text="Title" />
+
+            <ImageButton
+                android:id="@+id/current_track_playback_button"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center_horizontal"
+                android:contentDescription="@string/current_track_playback_button"
+                android:onClick="@{() -> viewModel.onCurrentTrackPlaybackButtonClick()}"
+                android:src="@{viewModel.isCurrentTrackPlaying ? @android:drawable/ic_media_pause : @android:drawable/ic_media_play}"
+                app:layout_constraintTop_toTopOf="@+id/player_divider" />
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/player_frame"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:visibility="@{viewModel.isPlaying||viewModel.isPaused ? android.view.View.VISIBLE : android.view.View.GONE}">
 
             <View
                 android:id="@+id/player_divider"
